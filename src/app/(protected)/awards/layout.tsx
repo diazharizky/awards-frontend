@@ -1,4 +1,5 @@
 import { App } from 'antd'
+import { Navbar } from '../../../components'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -6,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Some description',
 }
 
-const RootLayout = ({
+const AwardsLayout = ({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode
@@ -14,10 +15,14 @@ const RootLayout = ({
   return (
     <html lang="en">
       <body>
-        <App>{children}</App>
+        <App>
+          <Navbar />
+
+          {children}
+        </App>
       </body>
     </html>
   )
 }
 
-export default RootLayout
+export default AwardsLayout
