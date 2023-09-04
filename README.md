@@ -15,3 +15,9 @@ First, please make sure that the backend service is up and running on port `:500
 ```bash
 yarn dev
 ```
+
+Finally, you can visit the web app at `http://localhost:3000`
+
+## Usable account
+
+- `foo@example.com`
