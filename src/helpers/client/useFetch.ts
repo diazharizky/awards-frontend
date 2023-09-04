@@ -7,7 +7,9 @@ const useFetch = () => {
     const isJson = resp.headers
       ?.get('content-type')
       ?.includes('application/json')
-    const res: { data: { error: string } } = isJson ? await resp.json() : null
+    const res: { ok: boolean; data: { error?: string } } = isJson
+      ? await resp.json()
+      : null
 
     if (!resp.ok) {
       if (resp.status === 401) {
