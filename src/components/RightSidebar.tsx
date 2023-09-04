@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Drawer,
   Typography,
@@ -13,8 +15,15 @@ import {
   Button,
 } from 'antd'
 import numeral from 'numeral'
+import { useSearchParams } from 'next/navigation'
 
 import { SidebarProps, awardTypes } from '.'
+
+type FilterType = {
+  type: string[]
+  minPoint: number
+  maxPoint: number
+}
 
 const { Text } = Typography
 
@@ -24,17 +33,14 @@ const pointSliderRange: { min: number; max: number } = {
 }
 
 const pointUnit = 5000
-const originalFilter: {
-  type: string[]
-  minPoint: number
-  maxPoint: number
-} = {
+const originalFilter: FilterType = {
   type: [],
   minPoint: pointSliderRange.min * pointUnit,
   maxPoint: pointSliderRange.max * pointUnit,
 }
 
 export const RightSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
+  const searchParams = useSearchParams()
   const [filter, setFilter] = useState(originalFilter)
 
   const onAwardTypeFilterChange = (val: string) => {
@@ -48,6 +54,22 @@ export const RightSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
       ...filter,
       type: [...filter.type, val],
     })
+  }
+
+  const adjustFilter = () => {
+    const filter: FilterType = originalFilter
+
+    if (searchParams.get('type')) {
+      filter.type = searchParams.get('type')?.split(',')!
+    }
+
+    if (searchParams.get('minPoint')) {
+      filter.minPoint = parseInt(searchParams.get('minPoint')!)
+    }
+
+    if (searchParams.get('maxPoint')) {
+      filter.maxPoint = parseInt(searchParams.get('maxPoint')!)
+    }
   }
 
   const applyFilter = () => {
@@ -70,6 +92,10 @@ export const RightSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
     filter.type.length <= 0 &&
     filter.minPoint == originalFilter.minPoint &&
     filter.maxPoint == originalFilter.maxPoint
+
+  useEffect(() => {
+    adjustFilter()
+  }, [])
 
   return (
     <Drawer
@@ -170,12 +196,7 @@ export const RightSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
             </Checkbox>
           </Col>
         </Row>
-        <Button
-          type="primary"
-          block
-          disabled={isFilterEmpty}
-          onClick={applyFilter}
-        >
+        <Button type="primary" block onClick={applyFilter}>
           Apply filter
         </Button>
       </Space>
