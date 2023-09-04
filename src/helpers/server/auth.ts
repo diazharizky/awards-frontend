@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers'
 
 function isAuthenticated(): boolean {
-  const loggedIn = cookies().get('logged_in')?.value ?? ''
-  return loggedIn === 'true'
+  const loggedIn = cookies().get('token')?.value ?? ''
+  return loggedIn !== ''
 }
 
 export const auth = {

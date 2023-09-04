@@ -1,6 +1,5 @@
 import { useSearchParams, useRouter } from 'next/navigation'
-
-import { useFetch } from '../helpers/client'
+import axios from 'axios'
 
 type errorResp = {
   error?: string
@@ -14,23 +13,16 @@ interface IAccountService {
 const useAccountService = (): IAccountService => {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const fetch = useFetch()
 
   return {
     login: async (email: string) => {
-      const res = await fetch.post('/api/accounts/login', { email })
-      if (!res.ok) {
-        return { error: res.data?.error }
-      }
+      const res = await axios.post('/api/accounts/login', { email })
 
       const returnUrl = searchParams.get('returnUrl') || '/awards'
       router.push(returnUrl)
     },
     logout: async () => {
-      const res = await fetch.post('/api/accounts/logout')
-      if (!res.ok) {
-        return { error: res.data?.error }
-      }
+      await axios.post('/api/accounts/logout')
 
       router.push('/')
     },

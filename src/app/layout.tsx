@@ -1,8 +1,5 @@
-import { App } from 'antd'
 import { Metadata } from 'next'
-import { redirect } from 'next/navigation'
-
-import { auth } from '../helpers/server/auth'
+import { App } from 'antd'
 
 export const metadata: Metadata = {
   title: 'Awards App',
@@ -10,10 +7,6 @@ export const metadata: Metadata = {
 }
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
-  if (auth.isAuthenticated()) {
-    return redirect(`/awards`)
-  }
-
   return (
     <html lang="en">
       <body>

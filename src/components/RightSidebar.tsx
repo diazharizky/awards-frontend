@@ -25,11 +25,11 @@ const pointSliderRange: { min: number; max: number } = {
 
 const pointUnit = 5000
 const originalFilter: {
-  types: string[]
+  type: string[]
   minPoint: number
   maxPoint: number
 } = {
-  types: [],
+  type: [],
   minPoint: pointSliderRange.min * pointUnit,
   maxPoint: pointSliderRange.max * pointUnit,
 }
@@ -38,16 +38,28 @@ export const RightSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
   const [filter, setFilter] = useState(originalFilter)
 
   const onAwardTypeFilterChange = (val: string) => {
-    if (filter.types.includes(val)) {
+    if (filter.type.includes(val)) {
       return setFilter({
         ...filter,
-        types: filter.types.filter((item) => item !== val),
+        type: filter.type.filter((item) => item !== val),
       })
     }
     setFilter({
       ...filter,
-      types: [...filter.types, val],
+      type: [...filter.type, val],
     })
+  }
+
+  const applyFilter = () => {
+    const qs: string[] = []
+
+    let k: keyof typeof filter
+    for (k in filter) {
+      qs.push(`${k}=${filter[k]}`)
+    }
+
+    const url = '/awards' + (qs.length > 0 ? '?' + qs.join('&') : '')
+    window.location.href = url
   }
 
   const isPointFilterChanged =
@@ -55,7 +67,7 @@ export const RightSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
     filter.maxPoint < originalFilter.maxPoint
 
   const isFilterEmpty =
-    filter.types.length <= 0 &&
+    filter.type.length <= 0 &&
     filter.minPoint == originalFilter.minPoint &&
     filter.maxPoint == originalFilter.maxPoint
 
@@ -81,11 +93,11 @@ export const RightSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
             </Tag>
           </Space>
         )}
-        {filter.types.length > 0 && (
+        {filter.type.length > 0 && (
           <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
             <Text strong>Types</Text>
             <div>
-              {filter.types.map((v, i) => (
+              {filter.type.map((v, i) => (
                 <Tag key={i} color="blue">
                   {awardTypes[v]}
                 </Tag>
@@ -142,7 +154,7 @@ export const RightSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
               value="voucher"
               style={{ lineHeight: '32px' }}
               onChange={(e) => onAwardTypeFilterChange(e.target.value)}
-              checked={filter.types.includes('voucher')}
+              checked={filter.type.includes('voucher')}
             >
               {awardTypes['voucher']}
             </Checkbox>
@@ -152,12 +164,20 @@ export const RightSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
               value="product"
               style={{ lineHeight: '32px' }}
               onChange={(e) => onAwardTypeFilterChange(e.target.value)}
-              checked={filter.types.includes('product')}
+              checked={filter.type.includes('product')}
             >
               {awardTypes['product']}
             </Checkbox>
           </Col>
         </Row>
+        <Button
+          type="primary"
+          block
+          disabled={isFilterEmpty}
+          onClick={applyFilter}
+        >
+          Apply filter
+        </Button>
       </Space>
     </Drawer>
   )

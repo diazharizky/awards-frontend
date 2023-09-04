@@ -1,22 +1,37 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Card, Tag, Typography, Space } from 'antd'
 import numeral from 'numeral'
+import { useSearchParams } from 'next/navigation'
 
 import { awardTypes } from '../../../components'
+import { Award, AwardListFilter } from '../../../models'
+
+import { useAwardService } from '../../../services'
 
 const { Text } = Typography
 
 export default function Page() {
-  const awards: { name: string; type: string; point: number }[] = []
+  const [awards, setAwards] = useState<Award[]>([])
+  const awardService = useAwardService()
+  const searchParams = useSearchParams()
 
-  for (let i = 1; i <= 20; i++) {
-    awards.push({
-      name: `Award ${i}`,
-      type: i % 2 == 0 ? 'voucher' : 'product',
-      point: 500 * i,
-    })
+  const getFilter = (): AwardListFilter => {
+    return {
+      type: searchParams.get('type'),
+      minPoint: searchParams.get('minPoint'),
+      maxPoint: searchParams.get('maxPoint'),
+    }
   }
+
+  useEffect(() => {
+    ;(async () => {
+      const awards = await awardService.list(getFilter())
+      setAwards(awards)
+    })()
+  }, [])
 
   return (
     <Space

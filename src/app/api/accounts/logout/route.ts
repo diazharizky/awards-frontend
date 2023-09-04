@@ -1,34 +1,16 @@
+import { NextResponse } from 'next/server'
+import axios from 'axios'
 import { cookies } from 'next/headers'
 
-import { apiHandler } from '../../../../helpers/server/api'
+export async function POST() {
+  const token = cookies().get('token')?.value
+  await axios.post('http://localhost:5000/accounts/signout', null, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
 
-const logout = async () => {
-  let errMessage = 'Unexpected error'
+  cookies().delete('token')
 
-  try {
-    const res = await fetch('http://0.0.0.0:5000/accounts/signout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-
-    const { ok }: { ok: boolean } = await res.json()
-    if (!ok) {
-      return { ok: false, data: { error: errMessage } }
-    }
-
-    cookies().delete('logged_in')
-    return { ok: true }
-  } catch (err) {
-    if (err instanceof Error) {
-      errMessage = err.message
-    }
-
-    return { ok: false, data: { error: errMessage } }
-  }
+  return NextResponse.json({ data: 'ok' })
 }
-
-module.exports = apiHandler({
-  POST: logout,
-})
