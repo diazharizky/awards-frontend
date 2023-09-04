@@ -2,8 +2,13 @@ import { useSearchParams, useRouter } from 'next/navigation'
 
 import { useFetch } from '../helpers/client'
 
+type errorResp = {
+  error?: string
+}
+
 interface IAccountService {
-  login(email: string): Promise<{ error?: string } | void>
+  login(email: string): Promise<errorResp | void>
+  logout(): Promise<errorResp | void>
 }
 
 const useAccountService = (): IAccountService => {
@@ -20,6 +25,14 @@ const useAccountService = (): IAccountService => {
 
       const returnUrl = searchParams.get('returnUrl') || '/awards'
       router.push(returnUrl)
+    },
+    logout: async () => {
+      const res = await fetch.post('/api/accounts/logout')
+      if (!res.ok) {
+        return { error: res.data?.error }
+      }
+
+      router.push('/')
     },
   }
 }

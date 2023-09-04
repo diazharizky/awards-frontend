@@ -1,9 +1,9 @@
 import React from 'react'
-import { Drawer, Typography, Menu } from 'antd'
+import { Drawer, Menu } from 'antd'
 import type { MenuProps } from 'antd'
-import { SidebarProps } from '.'
 
-const { Title } = Typography
+import { useAccountService } from '../services'
+import { SidebarProps } from '.'
 
 type MenuItem = Required<MenuProps>['items'][number]
 
@@ -23,19 +23,21 @@ function getItem(
   } as MenuItem
 }
 
-const items: MenuProps['items'] = [
-  getItem('Home', 'home'),
-  getItem('Cards', 'cards'),
-  getItem('Profile', 'profile'),
-  getItem('Logout', 'logout'),
-]
-
 export const LeftSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
+  const accountService = useAccountService()
+
   const menuActions: Record<string, Function> = {
     home: onClose,
+    logout: accountService.logout,
   }
-
   const onClick: MenuProps['onClick'] = (e) => menuActions[e.key]()
+
+  const items: MenuProps['items'] = [
+    getItem('Home', 'home'),
+    getItem('Cards', 'cards'),
+    getItem('Profile', 'profile'),
+    getItem('Logout', 'logout'),
+  ]
 
   return (
     <Drawer
