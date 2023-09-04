@@ -1,9 +1,12 @@
-import React from 'react'
-import { auth } from '../_helper/server/auth'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
+
+import { auth } from '../../helpers/server/auth'
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   if (!auth.isAuthenticated()) {
-    console.log('not log in')
+    const returnUrl = encodeURIComponent(headers().get('x-invoke-path') || '/')
+    redirect(`/?returnUrl=${returnUrl}`)
   }
 
   return <div>{children}</div>

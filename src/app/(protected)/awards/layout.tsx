@@ -1,28 +1,14 @@
-import { App } from 'antd'
 import { Navbar } from '../../../components'
-import { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: 'Awards App',
-  description: 'Some description',
-}
-
-const AwardsLayout = ({
-  children, // will be a page or nested layout
+export default function AwardsLayout({
+  children,
 }: {
   children: React.ReactNode
-}) => {
+}) {
   return (
-    <html lang="en">
-      <body>
-        <App>
-          <Navbar />
-
-          {children}
-        </App>
-      </body>
-    </html>
+    <div>
+      <Navbar />
+      {children}
+    </div>
   )
 }
-
-export default AwardsLayout

@@ -2,6 +2,7 @@
 
 import { Card, Tag, Typography, Space } from 'antd'
 import numeral from 'numeral'
+
 import { awardTypes } from '../../../components'
 
 const { Text } = Typography
