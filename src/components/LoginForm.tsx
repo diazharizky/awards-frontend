@@ -1,15 +1,23 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Button, Card, Form, Input, Space, Typography } from 'antd'
+import { useState } from 'react'
+import { Button, Card, Form, Input, Space, Typography, Alert } from 'antd'
+
+import { useAccountService } from '../services'
 
 const { Text } = Typography
 
 export const LoginForm: React.FC = () => {
   const [input, setInput] = useState('')
+  const [loginErr, setLoginErr] = useState('')
 
-  const onFinish = (values: any) => {
-    console.log('Received values of form: ', values)
+  const accountService = useAccountService()
+
+  const onFinish = async ({ email }: { email: string }) => {
+    const res = await accountService.login(email)
+    if (res instanceof Object) {
+      setLoginErr(res.error!)
+    }
   }
 
   return (
@@ -25,7 +33,7 @@ export const LoginForm: React.FC = () => {
         <Space direction="vertical" size="middle" style={{ display: 'flex' }}>
           <Text>Enter your email address to sign in and continue</Text>
           <Form onFinish={onFinish}>
-            <Form.Item>
+            <Form.Item name="email">
               <Input
                 placeholder="Email address"
                 onChange={(e) => setInput(e.target.value)}
@@ -33,10 +41,16 @@ export const LoginForm: React.FC = () => {
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" block disabled={!(input !== '')}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                disabled={!(input !== '')}
+              >
                 Sign in
               </Button>
             </Form.Item>
+            {loginErr !== '' && <Alert message={loginErr} type="warning" />}
           </Form>
         </Space>
       </Card>

@@ -98,7 +98,6 @@ export const RightSidebar: React.FC<SidebarProps> = ({ onClose, open }) => {
             type="primary"
             size="small"
             onClick={() => {
-              console.log('current filter', filter)
               setFilter(originalFilter)
             }}
           >
